@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Valentine ❤️</title>
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+    --bg-main: #0a0a0a;
+    --valentine-red: #ff4d6d;
+    --valentine-pink: #ff8fa3;
+    --valentine-dark: #800f2f;
+    --text-main: #ffffff;
+    --text-muted: #ffa8ba;
+    --border: rgba(255,77,109,.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html,body{
+    width:100%;
+    height:100%;
+    font-family:'Inter',sans-serif;
+    background:radial-gradient(circle at top,#1a0000,var(--bg-main));
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    cursor:none;
+    color:var(--text-main);
+}
+
+/* Cursor */
+#cursor{
+    width:8px;
+    height:8px;
+    background:var(--valentine-red);
+    border-radius:50%;
+    position:fixed;
+    pointer-events:none;
+    box-shadow:0 0 20px var(--valentine-red);
+    z-index:9999;
+}
+
+/* Overlay */
+#overlay{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(135deg,#0a0000,#1a0000);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:100;
+    transition:opacity 1.2s ease;
+}
+
+#overlay h1{
+    font-family:'Playfair Display',serif;
+    letter-spacing:8px;
+    color:var(--valentine-red);
+}
+
+#overlay p{
+    margin-top:30px;
+    letter-spacing:4px;
+    font-size:.75rem;
+    color:var(--text-muted);
+}
+
+/* Card */
+.card{
+    background:rgba(255,77,109,.08);
+    backdrop-filter:blur(30px);
+    border:2px solid var(--border);
+    padding:80px 60px;
+    max-width:480px;
+    width:90%;
+    text-align:center;
+    opacity:0;
+    transform:translateY(40px);
+    transition:1.4s ease;
+}
+
+.card.active{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.card h1{
+    font-family:'Playfair Display',serif;
+    font-size:3.8rem;
+    color:var(--valentine-red);
+}
+
+.sub{
+    margin:25px 0 50px;
+    letter-spacing:6px;
+    font-size:.8rem;
+    color:var(--text-muted);
+}
+
+/* Buttons */
+.buttons{
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+}
+
+button{
+    background:none;
+    border:none;
+    color:white;
+    letter-spacing:4px;
+    font-size:.9rem;
+    cursor:none;
+    transition:.4s ease;
+}
+
+.yes{
+    border-bottom:2px solid var(--valentine-red);
+    padding-bottom:10px;
+}
+
+.yes:hover{
+    color:var(--valentine-red);
+    letter-spacing:8px;
+}
+
+.no{
+    font-size:.7rem;
+    color:var(--text-muted);
+}
+
+/* Success */
+#success{ display:none; }
+
+.yesss{
+    font-family:'Playfair Display',serif;
+    font-size:4rem;
+    color:var(--valentine-pink);
+    margin-top:20px;
+}
+
+/* Music Button */
+.music-control{
+    position:fixed;
+    bottom:30px;
+    right:30px;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:rgba(255,77,109,.2);
+    border:2px solid var(--border);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:var(--valentine-red);
+}
+
+/* Responsive */
+@media(max-width:480px){
+    .card{ padding:60px 35px; }
+    .card h1{ font-size:3rem; }
+    .yesss{ font-size:3rem; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="cursor"></div>
+
+<div id="overlay" onclick="start()">
+    <h1>FOR MY VALENTINE</h1>
+    <p>CLICK TO BEGIN</p>
+</div>
+
+<!-- Background Music -->
+<audio id="music" loop preload="auto">
+  <source src="Christina_Perri_-_A_Thousand_Years_CeeNaija.com_.mp3" type="audio/mpeg">
+</audio>
+
+
+<div class="card" id="card">
+    <div id="question">
+        <h1>Will you?</h1>
+        <div class="sub">VALENTINE'S DAY 2026</div>
+
+        <div class="buttons">
+            <button class="yes" onclick="accept()">Yes, I will</button>
+            <button class="no" id="noBtn">Maybe later</button>
+        </div>
+    </div>
+
+    <div id="success">
+        <h1>She said yes.</h1>
+        <div class="yesss">Yessssss ❤️</div>
+    </div>
+</div>
+
+<div class="music-control" onclick="toggleMusic()">
+    <i class="fas fa-volume-up" id="musicIcon"></i>
+</div>
+
+<script>
+const cursor=document.getElementById('cursor');
+const card=document.getElementById('card');
+const music=document.getElementById('music');
+const noBtn=document.getElementById('noBtn');
+const musicIcon=document.getElementById('musicIcon');
+let musicPlaying=true;
+
+/* Cursor */
+document.addEventListener('mousemove',e=>{
+    cursor.style.left=e.clientX+'px';
+    cursor.style.top=e.clientY+'px';
+});
+
+/* Start */
+function start(){
+    overlay.style.opacity=0;
+    setTimeout(()=>{
+        overlay.style.display='none';
+        card.classList.add('active');
+
+        music.volume=0;
+        music.muted=true;
+        music.play().then(()=>music.muted=false);
+
+        let fade=setInterval(()=>{
+            if(music.volume<0.7) music.volume+=0.05;
+            else clearInterval(fade);
+        },100);
+    },1000);
+}
+
+/* No button escape */
+noBtn.addEventListener('mouseenter',()=>{
+    noBtn.style.position='absolute';
+    noBtn.style.left=Math.random()*60+'%';
+    noBtn.style.top=Math.random()*60+'%';
+});
+
+/* Accept */
+function accept(){
+    document.getElementById('question').style.display='none';
+    document.getElementById('success').style.display='block';
+    music.volume=0.9;
+}
+
+/* Music toggle */
+function toggleMusic(){
+    if(musicPlaying){
+        music.pause();
+        musicIcon.className='fas fa-volume-mute';
+    }else{
+        music.play();
+        musicIcon.className='fas fa-volume-up';
+    }
+    musicPlaying=!musicPlaying;
+}
+</script>
+
+</body>
+</html>
